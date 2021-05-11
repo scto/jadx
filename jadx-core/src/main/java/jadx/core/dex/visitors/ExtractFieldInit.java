@@ -6,9 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jadx.api.plugins.input.data.attributes.JadxAttrType;
 import jadx.core.dex.attributes.AFlag;
 import jadx.core.dex.attributes.AType;
-import jadx.core.dex.attributes.fldinit.FieldInitAttr;
+import jadx.core.dex.attributes.FieldInitInsnAttr;
 import jadx.core.dex.info.AccessInfo;
 import jadx.core.dex.info.FieldInfo;
 import jadx.core.dex.instructions.IndexInsnNode;
@@ -70,7 +71,7 @@ public class ExtractFieldInit extends AbstractVisitor {
 		if (field.getDeclClass().equals(cls.getClassInfo())) {
 			FieldNode fn = cls.searchField(field);
 			if (fn != null && fn.getAccessFlags().isFinal()) {
-				fn.remove(AType.FIELD_INIT);
+				fn.remove(JadxAttrType.CONSTANT_VALUE);
 			}
 		}
 	}
@@ -266,6 +267,6 @@ public class ExtractFieldInit extends AbstractVisitor {
 
 	private static void addFieldInitAttr(MethodNode classInitMth, FieldNode field, InsnNode insn) {
 		InsnNode assignInsn = InsnNode.wrapArg(insn.getArg(0));
-		field.addAttr(FieldInitAttr.insnValue(classInitMth, assignInsn));
+		field.addAttr(new FieldInitInsnAttr(classInitMth, assignInsn));
 	}
 }

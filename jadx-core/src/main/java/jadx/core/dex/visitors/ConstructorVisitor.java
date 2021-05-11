@@ -63,6 +63,7 @@ public class ConstructorVisitor extends AbstractVisitor {
 		RegisterArg instanceArg = ((RegisterArg) inv.getArg(0));
 		InsnNode instArgAssignInsn = instanceArg.getAssignInsn();
 		ConstructorInsn co = new ConstructorInsn(mth, inv);
+		co.inheritMetadata(inv);
 		if (co.isNewInstance()) {
 			co.setResult(instanceArg);
 			// convert from 'use' to 'assign'
@@ -72,7 +73,7 @@ public class ConstructorVisitor extends AbstractVisitor {
 
 		co.rebindArgs();
 		boolean remove = false;
-		if (co.isSuper() && (co.getArgsCount() == 0 || parentClass.isEnum())) {
+		if ((co.isSuper() || co.isSelf()) && (co.getArgsCount() == 0 || parentClass.isEnum())) {
 			remove = true;
 		} else if (co.isThis() && co.getArgsCount() == 0) {
 			MethodNode defCo = parentClass.searchMethodByShortId(callMth.getShortId());
@@ -104,6 +105,7 @@ public class ConstructorVisitor extends AbstractVisitor {
 						}
 					}
 				}
+				co.inheritMetadata(newInstInsn);
 			}
 		}
 		ConstructorInsn replace = processConstructor(mth, co);
@@ -144,6 +146,7 @@ public class ConstructorVisitor extends AbstractVisitor {
 		}
 		ConstructorInsn newInsn = new ConstructorInsn(defCtr.getMethodInfo(), co.getCallType());
 		newInsn.setResult(co.getResult().duplicate());
+		newInsn.inheritMetadata(co);
 		return newInsn;
 	}
 

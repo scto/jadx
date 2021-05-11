@@ -18,6 +18,11 @@ java-11:
   image: openjdk:11
   script: ./gradlew clean build dist --warning-mode=all
 
+java-11-java-input:
+  stage: test
+  image: openjdk:11
+  script: TEST_INPUT_PLUGIN=java ./gradlew clean build --warning-mode=all
+
 java-15:
   stage: test
   image: openjdk:15

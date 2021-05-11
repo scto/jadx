@@ -244,8 +244,9 @@ public class RootNode {
 	}
 
 	public void runPreDecompileStage() {
+		boolean debugEnabled = LOG.isDebugEnabled();
 		for (IDexTreeVisitor pass : preDecompilePasses) {
-			long start = System.currentTimeMillis();
+			long start = debugEnabled ? System.currentTimeMillis() : 0;
 			try {
 				pass.init(this);
 			} catch (Exception e) {
@@ -254,7 +255,7 @@ public class RootNode {
 			for (ClassNode cls : classes) {
 				DepthTraversal.visit(pass, cls);
 			}
-			if (LOG.isDebugEnabled()) {
+			if (debugEnabled) {
 				LOG.debug("{} time: {}ms", pass.getClass().getSimpleName(), System.currentTimeMillis() - start);
 			}
 		}
